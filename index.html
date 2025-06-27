@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الايدي نيم</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      direction: rtl;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #161b22;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #000;
+      position: relative;
+    }
+    .brand-name {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff3c6a;
+      font-family: 'Arial Black', sans-serif;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    input[type="text"], input[type="color"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: none;
+      background-color: #0d1117;
+      color: #fff;
+    }
+    .effects {
+      margin-top: 10px;
+    }
+    .effects label {
+      display: inline-block;
+      margin-left: 15px;
+      font-size: 16px;
+    }
+    .colors-container {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .colors-container label {
+      font-size: 14px;
+      text-align: center;
+    }
+    .colors-container input[type="color"] {
+      width: 50px;
+      height: 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .preview {
+      margin-top: 30px;
+      font-size: 28px;
+      padding: 15px;
+      background-color: #0d1117;
+      border-radius: 10px;
+      border: 2px dashed #444;
+      text-align: center;
+      word-break: break-word;
+      min-height: 60px;
+    }
+    .final-output {
+      margin-top: 15px;
+      font-size: 20px;
+      background: #222831;
+      padding: 10px;
+      border-radius: 8px;
+      word-break: break-word;
+      color: #cfcfcf;
+      user-select: all;
+      white-space: pre-wrap;
+      direction: rtl;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2ea043;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ✅ اسم فوق يسار -->
+    <div class="brand-name">𝐇𝐲𝐬𝐭𝐞𝐫𝐢𝐚 𝐒𝐭𝐫𝐞𝐞𝐭</div>
+
+    <h2>🎮 الايدي نيم</h2>
+
+    <label>اكتب الايدي نيم الي بدك اياه:</label>
+    <input type="text" id="gameName" oninput="generateColorPickers()" />
+
+    <label>أدخل ID الخاص فيك:</label>
+    <input type="text" id="gameID" />
+
+    <label>اختر التأثير:</label>
+    <div class="effects">
+      <label><input type="checkbox" id="boldEffect" /> Bold</label>
+      <label><input type="checkbox" id="italicEffect" /> Italic</label>
+    </div>
+
+    <label>اختر لون لكل حرف:</label>
+    <div id="colorPickers" class="colors-container"></div>
+
+    <button onclick="generateColoredName()">✅ اعرض الاسم</button>
+
+    <div class="preview" id="previewBox">لا توجد معاينة</div>
+
+    <div class="final-output" id="finalOutput" title="اضغط لنسخ الاسم"></div>
+  </div>
+
+  <script>
+    function generateColorPickers() {
+      const name = document.getElementById('gameName').value;
+      const container = document.getElementById('colorPickers');
+      container.innerHTML = '';
+
+      [...name].forEach((char, i) => {
+        const label = document.createElement('label');
+        label.innerHTML = `"${char}"<br>`;
+
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.value = '#ffffff';
+        colorInput.dataset.index = i;
+
+        label.appendChild(colorInput);
+        container.appendChild(label);
+      });
+    }
+
+    function generateColoredName() {
+      const name = document.getElementById('gameName').value;
+      const gameID = document.getElementById('gameID').value.trim();
+      const isBold = document.getElementById('boldEffect').checked;
+      const isItalic = document.getElementById('italicEffect').checked;
+      const previewBox = document.getElementById('previewBox');
+      const finalOutput = document.getElementById('finalOutput');
+
+      if (!name) {
+        previewBox.innerHTML = '<span style="color: #777;">لا توجد معاينة</span>';
+        finalOutput.textContent = '';
+        return;
+      }
+
+      const colorInputs = document.querySelectorAll('#colorPickers input[type="color"]');
+
+      let styledHTML = '';
+      [...name].forEach((char, i) => {
+        const color = colorInputs[i]?.value || '#ffffff';
+        styledHTML += `<span style="color: ${color};">${char}</span>`;
+      });
+
+      if (isBold) styledHTML = `<strong>${styledHTML}</strong>`;
+      if (isItalic) styledHTML = `<em>${styledHTML}</em>`;
+
+      previewBox.innerHTML = styledHTML + (gameID ? `<br><small style="color:#ccc">ID: ${gameID}</small>` : '');
+
+      let finalText = name;
+      if (gameID) finalText += ` [ID: ${gameID}]`;
+
+      finalOutput.textContent = finalText;
+    }
+
+    document.getElementById('finalOutput').addEventListener('click', function () {
+      const text = this.textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        this.title = "✅ تم النسخ!";
+        setTimeout(() => this.title = "اضغط لنسخ الاسم", 2000);
+      });
+    });
+  </script>
+</body>
+</html>
